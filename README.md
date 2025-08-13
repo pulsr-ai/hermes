@@ -39,23 +39,28 @@ The service will be available at:
 
 ### Manual Installation
 
-1. Install dependencies:
+1. Install Poetry (if not already installed):
    ```bash
-   pip install -r requirements.txt
+   curl -sSL https://install.python-poetry.org | python3 -
    ```
 
-2. Set up PostgreSQL database
-
-3. Configure environment variables in `.env`
-
-4. Run migrations:
+2. Install dependencies:
    ```bash
-   alembic upgrade head
+   poetry install
    ```
 
-5. Start the service:
+3. Set up PostgreSQL database
+
+4. Configure environment variables in `.env`
+
+5. Run migrations:
    ```bash
-   uvicorn app.main:app --host 0.0.0.0 --port 8000
+   poetry run alembic upgrade head
+   ```
+
+6. Start the service:
+   ```bash
+   poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000
    ```
 
 ## API Authentication
