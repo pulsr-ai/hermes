@@ -5,7 +5,7 @@ from typing import Optional
 class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql://user:password@localhost:5432/hermes"
     SMTP_HOST: str = "0.0.0.0"
-    SMTP_PORT: int = 2525
+    SMTP_PORT: int = 25
     SMTP_DOMAIN: str = "example.com"
     OUTBOUND_SMTP_HOST: Optional[str] = None
     OUTBOUND_SMTP_PORT: int = 587

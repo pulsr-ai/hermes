@@ -28,7 +28,9 @@ COPY . /app/
 RUN mkdir -p /app/dkim
 
 # Expose ports
-EXPOSE 8000 2525
+# Port 8000 for API, Port 25 for SMTP (external mail delivery)
+# Note: When deploying, map external port 25 to container port 25
+EXPOSE 8000 25
 
 # Run the application
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

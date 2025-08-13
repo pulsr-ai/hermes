@@ -14,12 +14,12 @@ A complete transactional email service built with FastAPI, featuring inbound/out
 
 ## Quick Start
 
-### Using Docker Compose
+### Using Docker
 
 1. Clone the repository
-2. Copy environment file:
+2. Build the Docker image:
    ```bash
-   cp .env.example .env
+   docker build -t hermes .
    ```
 3. Generate DKIM keys (optional):
    ```bash
@@ -27,14 +27,20 @@ A complete transactional email service built with FastAPI, featuring inbound/out
    openssl genrsa -out dkim/private.key 2048
    openssl rsa -in dkim/private.key -pubout -out dkim/public.key
    ```
-4. Start services:
+4. Run the container:
    ```bash
-   docker-compose up -d
+   docker run -d \
+     -p 8000:8000 \
+     -p 25:25 \
+     -e DATABASE_URL="your-database-url" \
+     -e API_KEY="your-secure-api-key" \
+     -v ./dkim:/app/dkim \
+     hermes
    ```
 
 The service will be available at:
 - API: http://localhost:8000
-- SMTP: localhost:2525
+- SMTP: localhost:25 (for receiving external mail)
 - API Documentation: http://localhost:8000/docs
 
 ### Manual Installation
@@ -129,9 +135,14 @@ POST /api/emails/send
 ## Receiving Emails
 
 Configure your domain's MX records to point to your server, then emails sent to any address at your domain will be:
-1. Received via SMTP on port 2525
+1. Received via SMTP on port 25 (standard SMTP port for mail delivery)
 2. Stored in the database
 3. Trigger webhooks if configured
+
+**Important for Production:**
+- Ensure port 25 is open in your firewall/security group
+- For cloud providers that block port 25, consider using a mail relay service
+- Scaleway: Use Container Instances or regular Instances (Serverless Containers don't support SMTP)
 
 ## Template Variables
 
@@ -179,7 +190,7 @@ Install and configure a local mail server like Postfix, then leave `OUTBOUND_SMT
 
 - `DATABASE_URL` - PostgreSQL connection string
 - `SMTP_HOST` - SMTP server host for receiving emails (default: 0.0.0.0)
-- `SMTP_PORT` - SMTP server port for receiving (default: 2525)
+- `SMTP_PORT` - SMTP server port for receiving (default: 25)
 - `SMTP_DOMAIN` - Your email domain
 - `OUTBOUND_SMTP_HOST` - Optional: External SMTP server for sending
 - `OUTBOUND_SMTP_PORT` - Outbound SMTP port (default: 587)
